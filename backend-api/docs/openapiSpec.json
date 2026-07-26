@@ -1,0 +1,1671 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Bus Ticket Booking API",
+    "version": "1.0.0",
+    "description": "API for managing bus ticket bookings, including admin operations for departure points and user operations for searching routes and managing bookings."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    },
+    {
+      "url": "https://api.busbooking.com",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/departure-points": {
+      "get": {
+        "summary": "Get all departure points",
+        "tags": ["Departure Points"],
+        "responses": {
+          "200": {
+            "description": "List of departure points",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DeparturePoint"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "status": "success",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "My Dinh Bus Station"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new departure point",
+        "tags": ["Departure Points"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the departure point"
+                  }
+                }
+              },
+              "example": {
+                "name": "My Dinh Bus Station"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Departure point created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DeparturePoint"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Name is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/departure-points/{id}": {
+      "get": {
+        "summary": "Get a departure point by ID",
+        "tags": ["Departure Points"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Departure point ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Departure point details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DeparturePoint"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID is required"
+          },
+          "404": {
+            "description": "Departure point not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a departure point",
+        "tags": ["Departure Points"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Departure point ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the departure point"
+                  }
+                }
+              },
+              "example": {
+                "name": "Nuoc Ngam Bus Station"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Departure point updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID and Name are required"
+          },
+          "404": {
+            "description": "Departure point not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a departure point",
+        "tags": ["Departure Points"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Departure point ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Departure point deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID is required"
+          },
+          "404": {
+            "description": "Departure point not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/destination-points": {
+      "get": {
+        "summary": "Get all destination points",
+        "tags": ["Destination Points"],
+        "responses": {
+          "200": {
+            "description": "List of destination points",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DestinationPoint"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new destination point",
+        "tags": ["Destination Points"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the destination point"
+                  }
+                }
+              },
+              "example": {
+                "name": "Ho Chi Minh Bus Station"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Destination point created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DestinationPoint"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Name is required"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/destination-points/{id}": {
+      "get": {
+        "summary": "Get a destination point by ID",
+        "tags": ["Destination Points"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Destination point ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Destination point details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DestinationPoint"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Destination point not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a destination point",
+        "tags": ["Destination Points"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Destination point ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the destination point"
+                  }
+                }
+              },
+              "example": {
+                "name": "Ben Thanh Bus Station"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Destination point updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DestinationPoint"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Name is required"
+          },
+          "404": {
+            "description": "Destination point not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a destination point",
+        "tags": ["Destination Points"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Destination point ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Destination point deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Destination point not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/routes/search": {
+      "get": {
+        "summary": "Search for bus routes",
+        "tags": ["Routes"],
+        "parameters": [
+          {
+            "name": "departure_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Departure point ID"
+          },
+          {
+            "name": "destination_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Destination ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available routes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Route"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Lỗi server"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes": {
+      "post": {
+        "summary": "Create a new route",
+        "tags": ["Routes"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "departure_id",
+                  "destination_id",
+                  "bus_type_id",
+                  "departure_time",
+                  "duration_hours",
+                  "price",
+                  "available_seats"
+                ],
+                "properties": {
+                  "departure_id": {
+                    "type": "integer"
+                  },
+                  "destination_id": {
+                    "type": "integer"
+                  },
+                  "bus_type_id": {
+                    "type": "integer"
+                  },
+                  "departure_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "duration_hours": {
+                    "type": "number"
+                  },
+                  "price": {
+                    "type": "integer"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "default": "VND"
+                  },
+                  "available_seats": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "example": {
+                "departure_id": 1,
+                "destination_id": 2,
+                "bus_type_id": 1,
+                "departure_time": "2025-07-22T07:00:00Z",
+                "duration_hours": 18.5,
+                "price": 500000,
+                "currency": "VND",
+                "available_seats": 40
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Route created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Route"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Tạo tuyến thất bại"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Get all routes",
+        "tags": ["Routes"],
+        "responses": {
+          "200": {
+            "description": "List of routes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Route"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Lỗi server"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes/{id}": {
+      "put": {
+        "summary": "Update a route",
+        "tags": ["Routes"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Route ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "departure_id": {
+                    "type": "integer"
+                  },
+                  "destination_id": {
+                    "type": "integer"
+                  },
+                  "bus_type_id": {
+                    "type": "integer"
+                  },
+                  "departure_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "duration_hours": {
+                    "type": "number"
+                  },
+                  "price": {
+                    "type": "integer"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "default": "VND"
+                  },
+                  "available_seats": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "example": {
+                "departure_time": "2025-07-23T08:00:00Z",
+                "available_seats": 35
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Route updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sửa tuyến thành cong"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Sửa tuyến thất bại"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a route",
+        "tags": ["Routes"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Route ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Route deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Xóa tuyến thành công"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Xóa tuyến thất bại"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings": {
+      "post": {
+        "summary": "Create a new booking",
+        "tags": ["Bookings"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user_id",
+                  "route_id",
+                  "seat_number",
+                  "booking_date",
+                  "passenger_name",
+                  "passenger_phone"
+                ],
+                "properties": {
+                  "user_id": {
+                    "type": "integer"
+                  },
+                  "route_id": {
+                    "type": "integer"
+                  },
+                  "seat_number": {
+                    "type": "integer"
+                  },
+                  "booking_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "passenger_name": {
+                    "type": "string"
+                  },
+                  "passenger_phone": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "user_id": 1,
+                "route_id": 1,
+                "seat_number": 12,
+                "booking_date": "2025-07-22",
+                "passenger_name": "John Doe",
+                "passenger_phone": "0123456789"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Booking created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Booking"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Booking failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Get all bookings for a user",
+        "tags": ["Bookings"],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of bookings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Booking"
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User ID is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User ID is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No bookings found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No bookings found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Failed to fetch bookings"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "email",
+                  "password",
+                  "full_name",
+                  "phone_number"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "full_name": {
+                    "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "username": "johndoe",
+                "email": "john@example.com",
+                "password": "securepassword123",
+                "full_name": "John Doe",
+                "phone_number": "0123456789"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Email đã tồn tại"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login user and get access token",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "email": "john@example.com",
+                "password": "securepassword123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Sai email hoặc mật khẩu"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Đăng nhập lỗi"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/register": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Register a new admin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "email",
+                  "password",
+                  "full_name",
+                  "phone_number"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "full_name": {
+                    "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "username": "admin",
+                "email": "admin@example.com",
+                "password": "adminpassword123",
+                "full_name": "Admin User",
+                "phone_number": "0987654321"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Admin registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Admin registered successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "detail": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/login": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Login admin and get access token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "email": "admin@example.com",
+                "password": "adminpassword123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "admin"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "detail": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/logout": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Logout admin",
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Admin logged out"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Logout failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Logout failed"
+                    },
+                    "detail": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeparturePoint": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the departure point"
+          }
+        }
+      },
+      "DestinationPoint": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the destination point"
+          }
+        }
+      },
+      "Route": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "departure_id": {
+            "type": "integer"
+          },
+          "destination_id": {
+            "type": "integer"
+          },
+          "bus_type_id": {
+            "type": "integer"
+          },
+          "departure_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration_hours": {
+            "type": "number"
+          },
+          "price": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string",
+            "default": "VND"
+          },
+          "available_seats": {
+            "type": "integer"
+          }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "route_id": {
+            "type": "integer"
+          },
+          "seat_number": {
+            "type": "integer"
+          },
+          "booking_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "passenger_name": {
+            "type": "string"
+          },
+          "passenger_phone": {
+            "type": "string"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "fail"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Departure Points",
+      "description": "Operations related to departure points management"
+    },
+    {
+      "name": "Destination Points",
+      "description": "Operations related to destination points management"
+    },
+    {
+      "name": "Routes",
+      "description": "Operations related to bus routes"
+    },
+    {
+      "name": "Bookings",
+      "description": "Operations related to ticket bookings"
+    },
+    {
+      "name": "Auth",
+      "description": "User authentication operations"
+    },
+    {
+      "name": "Admin",
+      "description": "Admin authentication and management operations"
+    }
+  ]
+}
