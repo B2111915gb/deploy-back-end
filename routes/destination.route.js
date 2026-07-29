@@ -9,14 +9,14 @@ router.post("/", verifyToken, requireAdmin, controller.createDestinationPoint);
 
 router.get(
   "/",
-  verifyToken,
+  
   httpCache({ maxAge: 300 }),
   controller.getAllDestinationPoints,
 );
 
 router.get(
   "/:id",
-  verifyToken,
+  
   httpCache({ maxAge: 300 }),
   controller.getDestinationPointById,
 );

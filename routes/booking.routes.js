@@ -5,15 +5,9 @@ const express = require("express");
 const router = express.Router();
 const bookingCtrl = require("../controllers/booking.controller");
 
-router.post("/", bookingCtrl.createBooking);
-router.get("/", bookingCtrl.getUserBookings);
-router.get("/all", verifyToken, requireAdmin, async (req, res) => {
-  try {
-    const allBookings = await db("bookings").select("*");
-    res.json({ status: "success", data: allBookings });
-  } catch (err) {
-    res.status(500).json({ message: "Internal error" });
-  }
-});
+router.post("/", verifyToken, bookingCtrl.createBooking);
+router.get("/", verifyToken, bookingCtrl.getUserBookings);
+router.delete("/:id", verifyToken, bookingCtrl.cancelBooking);
+router.get("/all", verifyToken, requireAdmin, bookingCtrl.getAllBookings);
 
 module.exports = router;

@@ -10,14 +10,14 @@ router.post("/", verifyToken, requireAdmin, controller.createDeparturePoint);
 // 👇 thêm httpCache({ maxAge: 300 }) vào giữa verifyToken và controller
 router.get(
   "/",
-  verifyToken,
+  
   httpCache({ maxAge: 300 }),
   controller.getAllDeparturePoints,
 );
 
 router.get(
   "/:id",
-  verifyToken,
+  
   httpCache({ maxAge: 300 }),
   controller.getDeparturePointById,
 );
